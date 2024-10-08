@@ -1,0 +1,40 @@
+name: Validate Json
+description: Validates all relevant json files against their respective json schemas.
+
+inputs:
+  path:
+    description: Root directory.
+    required: false
+    default: ${{ github.workspace }}
+  depth:
+    description: File system depth for recursive search for json and jsonc files.
+    required: false
+    default: "10"
+  validate-vscode-json-schema-patterns:
+    description: Setting to include/exclude vscode json.schemas setting patterns for schema validation.
+    required: false
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - name: Validate Json
+      id: validate-json
+      shell: pwsh
+      env:
+        path: ${{ inputs.path }}
+        depth: ${{ inputs.depth }}
+        validateVSCodeJsonSchemaPatterns: ${{ inputs.validate-vscode-json-schema-patterns }}
+        actionPath: ${{ github.action_path }}
+        debug: ${{ runner.debug }}
+      run: |
+        #* Validate-Json.ps1
+
+        #* Set debug preference from runner configuration
+        $DebugPreference = [bool]$env:debug ? "Continue" : "SilentlyContinue"
+
+        #* Get deployments
+        & "$($env:actionPath)/src/Validate-Json.ps1" `
+          -Path $env:path `
+          -Depth $env:depth`
+          -ValidateVSCodeJsonSchemaPatterns ([bool]::Parse($env:validateVSCodeJsonSchemaPatterns))
