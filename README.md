@@ -23,5 +23,5 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate Json
-        uses: climpr/validate-json@v0
+        uses: climpr/validate-json@v1
 ```
